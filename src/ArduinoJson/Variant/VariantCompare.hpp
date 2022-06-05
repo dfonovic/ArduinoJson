@@ -88,12 +88,7 @@ struct ArrayComparer : ComparerBase {
 
   explicit ArrayComparer(const CollectionData &rhs) : _rhs(&rhs) {}
 
-  CompareResult visitArray(const CollectionData &lhs) {
-    if (ArrayConstRef(&lhs) == ArrayConstRef(_rhs))
-      return COMPARE_RESULT_EQUAL;
-    else
-      return COMPARE_RESULT_DIFFER;
-  }
+  CompareResult visitArray(const CollectionData &lhs);
 };
 
 struct ObjectComparer : ComparerBase {
@@ -101,12 +96,7 @@ struct ObjectComparer : ComparerBase {
 
   explicit ObjectComparer(const CollectionData &rhs) : _rhs(&rhs) {}
 
-  CompareResult visitObject(const CollectionData &lhs) {
-    if (ObjectConstRef(&lhs) == ObjectConstRef(_rhs))
-      return COMPARE_RESULT_EQUAL;
-    else
-      return COMPARE_RESULT_DIFFER;
-  }
+  CompareResult visitObject(const CollectionData &lhs);
 };
 
 struct RawComparer : ComparerBase {
@@ -204,6 +194,160 @@ template <typename T2>
 CompareResult compare(VariantConstRef lhs, const T2 &rhs) {
   Comparer<T2> comparer(rhs);
   return lhs.accept(comparer);
+}
+
+// value == VariantConstRef
+template <typename T>
+inline bool operator==(T *lhs, VariantConstRef rhs) {
+  return compare(rhs, lhs) == COMPARE_RESULT_EQUAL;
+}
+template <typename T>
+inline bool operator==(const T &lhs, VariantConstRef rhs) {
+  return compare(rhs, lhs) == COMPARE_RESULT_EQUAL;
+}
+
+// VariantConstRef == value
+template <typename T>
+inline bool operator==(VariantConstRef lhs, T *rhs) {
+  return compare(lhs, rhs) == COMPARE_RESULT_EQUAL;
+}
+template <typename T>
+inline typename enable_if<!IsVisitable<T>::value, bool>::type operator==(
+    VariantConstRef lhs, const T &rhs) {
+  return compare(lhs, rhs) == COMPARE_RESULT_EQUAL;
+}
+
+// value != VariantConstRef
+template <typename T>
+inline bool operator!=(T *lhs, VariantConstRef rhs) {
+  return compare(rhs, lhs) != COMPARE_RESULT_EQUAL;
+}
+template <typename T>
+inline bool operator!=(const T &lhs, VariantConstRef rhs) {
+  return compare(rhs, lhs) != COMPARE_RESULT_EQUAL;
+}
+
+// VariantConstRef != value
+template <typename T>
+inline bool operator!=(VariantConstRef lhs, T *rhs) {
+  return compare(lhs, rhs) != COMPARE_RESULT_EQUAL;
+}
+template <typename T>
+inline typename enable_if<!IsVisitable<T>::value, bool>::type operator!=(
+    VariantConstRef lhs, const T &rhs) {
+  return compare(lhs, rhs) != COMPARE_RESULT_EQUAL;
+}
+
+// value < VariantConstRef
+template <typename T>
+inline bool operator<(T *lhs, VariantConstRef rhs) {
+  return compare(rhs, lhs) == COMPARE_RESULT_GREATER;
+}
+template <typename T>
+inline bool operator<(const T &lhs, VariantConstRef rhs) {
+  return compare(rhs, lhs) == COMPARE_RESULT_GREATER;
+}
+
+// VariantConstRef < value
+template <typename T>
+inline bool operator<(VariantConstRef lhs, T *rhs) {
+  return compare(lhs, rhs) == COMPARE_RESULT_LESS;
+}
+template <typename T>
+inline typename enable_if<!IsVisitable<T>::value, bool>::type operator<(
+    VariantConstRef lhs, const T &rhs) {
+  return compare(lhs, rhs) == COMPARE_RESULT_LESS;
+}
+
+// value <= VariantConstRef
+template <typename T>
+inline bool operator<=(T *lhs, VariantConstRef rhs) {
+  return (compare(rhs, lhs) & COMPARE_RESULT_GREATER_OR_EQUAL) != 0;
+}
+template <typename T>
+inline bool operator<=(const T &lhs, VariantConstRef rhs) {
+  return (compare(rhs, lhs) & COMPARE_RESULT_GREATER_OR_EQUAL) != 0;
+}
+
+// VariantConstRef <= value
+template <typename T>
+inline bool operator<=(VariantConstRef lhs, T *rhs) {
+  return (compare(lhs, rhs) & COMPARE_RESULT_LESS_OR_EQUAL) != 0;
+}
+template <typename T>
+inline typename enable_if<!IsVisitable<T>::value, bool>::type operator<=(
+    VariantConstRef lhs, const T &rhs) {
+  return (compare(lhs, rhs) & COMPARE_RESULT_LESS_OR_EQUAL) != 0;
+}
+
+// value > VariantConstRef
+template <typename T>
+inline bool operator>(T *lhs, VariantConstRef rhs) {
+  return compare(rhs, lhs) == COMPARE_RESULT_LESS;
+}
+template <typename T>
+inline bool operator>(const T &lhs, VariantConstRef rhs) {
+  return compare(rhs, lhs) == COMPARE_RESULT_LESS;
+}
+
+// VariantConstRef > value
+template <typename T>
+inline bool operator>(VariantConstRef lhs, T *rhs) {
+  return compare(lhs, rhs) == COMPARE_RESULT_GREATER;
+}
+template <typename T>
+inline typename enable_if<!IsVisitable<T>::value, bool>::type operator>(
+    VariantConstRef lhs, const T &rhs) {
+  return compare(lhs, rhs) == COMPARE_RESULT_GREATER;
+}
+
+// value >= VariantConstRef
+template <typename T>
+inline bool operator>=(T *lhs, VariantConstRef rhs) {
+  return (compare(rhs, lhs) & COMPARE_RESULT_LESS_OR_EQUAL) != 0;
+}
+template <typename T>
+inline bool operator>=(const T &lhs, VariantConstRef rhs) {
+  return (compare(rhs, lhs) & COMPARE_RESULT_LESS_OR_EQUAL) != 0;
+}
+
+// VariantConstRef >= value
+template <typename T>
+inline bool operator>=(VariantConstRef lhs, T *rhs) {
+  return (compare(lhs, rhs) & COMPARE_RESULT_GREATER_OR_EQUAL) != 0;
+}
+template <typename T>
+inline typename enable_if<!IsVisitable<T>::value, bool>::type operator>=(
+    VariantConstRef lhs, const T &rhs) {
+  return (compare(lhs, rhs) & COMPARE_RESULT_GREATER_OR_EQUAL) != 0;
+}
+
+inline CompareResult ArrayComparer::visitArray(const CollectionData &lhs) {
+  const CollectionData &rhs = *_rhs;
+
+  for (const VariantSlot *slot1 = lhs.head(), *slot2 = rhs.head();
+       slot1 || slot2; slot1 = slot1->next(), slot2 = slot2->next()) {
+    VariantConstRef val1(reinterpret_cast<const VariantData *>(slot1));
+    VariantConstRef val2(reinterpret_cast<const VariantData *>(slot2));
+    if (val1 != val2)
+      return COMPARE_RESULT_DIFFER;
+  }
+
+  return COMPARE_RESULT_EQUAL;
+}
+
+inline CompareResult ObjectComparer::visitObject(const CollectionData &lhs) {
+  const CollectionData &rhs = *_rhs;
+
+  size_t count = 0;
+  for (const VariantSlot *slot = lhs.head(); slot; slot = slot->next()) {
+    VariantConstRef val1(reinterpret_cast<const VariantData *>(slot));
+    VariantConstRef val2(rhs.getMember(adaptString(slot->key())));
+    if (val1 != val2)
+      return COMPARE_RESULT_DIFFER;
+    count++;
+  }
+  return count == rhs.size() ? COMPARE_RESULT_EQUAL : COMPARE_RESULT_DIFFER;
 }
 
 }  // namespace ARDUINOJSON_NAMESPACE

@@ -12,8 +12,8 @@ TEST_CASE("Compare JsonVariant with value") {
   StaticJsonDocument<256> doc;
   JsonVariant a = doc.addElement();
 
-  SECTION("null vs (char*)0") {
-    char* b = 0;
+  SECTION("null vs (const char*)0") {
+    const char* b = 0;
 
     CHECK(a == b);
     CHECK(a <= b);
