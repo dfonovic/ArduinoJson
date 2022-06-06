@@ -35,6 +35,7 @@
 #include "ArduinoJson/Object/MemberProxy.hpp"
 #include "ArduinoJson/Object/ObjectImpl.hpp"
 #include "ArduinoJson/Variant/ConverterImpl.hpp"
+#include "ArduinoJson/Variant/OrOperator.hpp"
 #include "ArduinoJson/Variant/VariantCompare.hpp"
 #include "ArduinoJson/Variant/VariantImpl.hpp"
 
