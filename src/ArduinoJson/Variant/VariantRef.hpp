@@ -13,7 +13,6 @@
 #include <ArduinoJson/Strings/StringAdapters.hpp>
 #include <ArduinoJson/Variant/Converter.hpp>
 #include <ArduinoJson/Variant/VariantFunctions.hpp>
-#include <ArduinoJson/Variant/VariantOperators.hpp>
 #include <ArduinoJson/Variant/VariantRef.hpp>
 #include <ArduinoJson/Variant/VariantShortcuts.hpp>
 #include <ArduinoJson/Variant/VariantTag.hpp>
@@ -65,7 +64,6 @@ class VariantRefBase : public VariantTag {
 };
 
 class VariantConstRef : public VariantRefBase<const VariantData>,
-                        public VariantOperators<VariantConstRef>,
                         public VariantShortcuts<VariantConstRef>,
                         public Visitable {
   typedef VariantRefBase<const VariantData> base_type;
@@ -179,7 +177,6 @@ class VariantConstRef : public VariantRefBase<const VariantData>,
 // - a string (const char*)
 // - a reference to a ArrayRef or ObjectRef
 class VariantRef : public VariantRefBase<VariantData>,
-                   public VariantOperators<VariantRef>,
                    public VariantShortcuts<VariantRef>,
                    public Visitable {
   typedef VariantRefBase<VariantData> base_type;

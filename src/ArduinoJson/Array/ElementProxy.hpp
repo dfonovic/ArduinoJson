@@ -5,7 +5,6 @@
 #pragma once
 
 #include <ArduinoJson/Configuration.hpp>
-#include <ArduinoJson/Variant/VariantOperators.hpp>
 #include <ArduinoJson/Variant/VariantShortcuts.hpp>
 #include <ArduinoJson/Variant/VariantTo.hpp>
 
@@ -17,8 +16,7 @@
 namespace ARDUINOJSON_NAMESPACE {
 
 template <typename TArray>
-class ElementProxy : public VariantOperators<ElementProxy<TArray> >,
-                     public VariantShortcuts<ElementProxy<TArray> >,
+class ElementProxy : public VariantShortcuts<ElementProxy<TArray> >,
                      public Visitable,
                      public VariantTag {
   typedef ElementProxy<TArray> this_type;

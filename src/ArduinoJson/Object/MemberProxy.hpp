@@ -7,7 +7,6 @@
 #include <ArduinoJson/Configuration.hpp>
 #include <ArduinoJson/Polyfills/type_traits.hpp>
 #include <ArduinoJson/Variant/Converter.hpp>
-#include <ArduinoJson/Variant/VariantOperators.hpp>
 #include <ArduinoJson/Variant/VariantRef.hpp>
 #include <ArduinoJson/Variant/VariantShortcuts.hpp>
 #include <ArduinoJson/Variant/VariantTo.hpp>
@@ -20,8 +19,7 @@
 namespace ARDUINOJSON_NAMESPACE {
 
 template <typename TObject, typename TStringRef>
-class MemberProxy : public VariantOperators<MemberProxy<TObject, TStringRef> >,
-                    public VariantShortcuts<MemberProxy<TObject, TStringRef> >,
+class MemberProxy : public VariantShortcuts<MemberProxy<TObject, TStringRef> >,
                     public Visitable,
                     public VariantTag {
   typedef MemberProxy<TObject, TStringRef> this_type;
