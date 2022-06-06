@@ -25,8 +25,6 @@ class MemberProxy : public VariantShortcuts<MemberProxy<TObject, TStringRef> >,
   typedef MemberProxy<TObject, TStringRef> this_type;
 
  public:
-  typedef VariantRef variant_type;
-
   FORCE_INLINE MemberProxy(TObject variant, TStringRef key)
       : _object(variant), _key(key) {}
 
