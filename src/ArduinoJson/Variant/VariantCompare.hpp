@@ -391,10 +391,20 @@ inline const char *operator|(VariantConstRef variant,
     return defaultValue;
 }
 //
-// JsonVariant operator|(JsonVariant, MemberProxy/ElementProxy)
-template <typename T>
-inline typename enable_if<IsVariant<T>::value, VariantRef>::type operator|(
-    VariantRef variant, T defaultValue) {
+// JsonVariant operator|(JsonVariant, ElementProxy)
+template <typename TArray>
+inline VariantRef operator|(VariantRef variant,
+                            const ElementProxy<TArray> &defaultValue) {
+  if (variant)
+    return variant;
+  else
+    return defaultValue;
+}
+//
+// JsonVariant operator|(JsonVariant, MemberProxy)
+template <typename TObject, typename TStringRef>
+inline VariantRef operator|(
+    VariantRef variant, const MemberProxy<TObject, TStringRef> &defaultValue) {
   if (variant)
     return variant;
   else
