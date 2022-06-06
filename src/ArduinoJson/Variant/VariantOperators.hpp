@@ -12,12 +12,6 @@
 
 namespace ARDUINOJSON_NAMESPACE {
 
-class VariantConstRef;
-
-template <typename T2>
-CompareResult compare(VariantConstRef lhs,
-                      const T2 &rhs);  // VariantCompare.cpp
-
 template <typename TVariant>
 struct VariantOperators {
   // Returns the default value if the VariantRef is unbound or incompatible
