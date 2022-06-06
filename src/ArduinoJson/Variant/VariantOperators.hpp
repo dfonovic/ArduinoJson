@@ -13,39 +13,5 @@
 namespace ARDUINOJSON_NAMESPACE {
 
 template <typename TVariant>
-struct VariantOperators {
-  // Returns the default value if the VariantRef is unbound or incompatible
-  //
-  // int operator|(JsonVariant, int)
-  // float operator|(JsonVariant, float)
-  // bool operator|(JsonVariant, bool)
-  template <typename T>
-  friend
-      typename enable_if<!IsVariant<T>::value && !is_array<T>::value, T>::type
-      operator|(const TVariant &variant, const T &defaultValue) {
-    if (variant.template is<T>())
-      return variant.template as<T>();
-    else
-      return defaultValue;
-  }
-  //
-  // const char* operator|(JsonVariant, const char*)
-  friend const char *operator|(const TVariant &variant,
-                               const char *defaultValue) {
-    if (variant.template is<const char *>())
-      return variant.template as<const char *>();
-    else
-      return defaultValue;
-  }
-  //
-  // JsonVariant operator|(JsonVariant, JsonVariant)
-  template <typename T>
-  friend typename enable_if<IsVariant<T>::value, typename T::variant_type>::type
-  operator|(const TVariant &variant, T defaultValue) {
-    if (variant)
-      return variant;
-    else
-      return defaultValue;
-  }
-};
+struct VariantOperators {};
 }  // namespace ARDUINOJSON_NAMESPACE

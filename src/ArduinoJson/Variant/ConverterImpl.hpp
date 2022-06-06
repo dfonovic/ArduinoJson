@@ -317,4 +317,8 @@ struct ConverterNeedsWriteableRef {
       sizeof(probe(Converter<T>::fromJson)) == sizeof(Yes);
 };
 
+// avoids "error: function returning an array"
+template <typename TElement, size_t N>
+struct ConverterNeedsWriteableRef<TElement[N]> : false_type {};
+
 }  // namespace ARDUINOJSON_NAMESPACE

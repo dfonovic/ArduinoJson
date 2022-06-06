@@ -31,7 +31,8 @@ struct is_convertible {
   static No &probe(...);
 
  public:
-  static const bool value = sizeof(probe(declval<From>())) == sizeof(Yes);
+  static const bool value =
+      sizeof(probe(*reinterpret_cast<const From *>(0))) == sizeof(Yes);
 };
 
 }  // namespace ARDUINOJSON_NAMESPACE

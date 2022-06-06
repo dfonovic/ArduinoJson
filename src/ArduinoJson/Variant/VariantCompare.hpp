@@ -350,4 +350,55 @@ inline CompareResult ObjectComparer::visitObject(const CollectionData &lhs) {
   return count == rhs.size() ? COMPARE_RESULT_EQUAL : COMPARE_RESULT_DIFFER;
 }
 
+// TODO: MOVE
+
+// Returns the default value if the VariantRef is unbound or incompatible
+//
+// int operator|(JsonVariant, int)
+// float operator|(JsonVariant, float)
+// bool operator|(JsonVariant, bool)
+template <typename T>
+inline typename enable_if<!IsVariant<T>::value &&
+                              !ConverterNeedsWriteableRef<T>::value &&
+                              !is_array<T>::value,
+                          T>::type
+operator|(VariantConstRef variant, const T &defaultValue) {
+  if (variant.is<T>())
+    return variant.as<T>();
+  else
+    return defaultValue;
+}
+
+template <typename T>
+inline typename enable_if<!IsVariant<T>::value &&
+                              ConverterNeedsWriteableRef<T>::value &&
+                              !is_array<T>::value,
+                          T>::type
+operator|(VariantRef variant, const T &defaultValue) {
+  if (variant.is<T>())
+    return variant.as<T>();
+  else
+    return defaultValue;
+}
+
+//
+// const char* operator|(JsonVariant, const char*)
+inline const char *operator|(VariantConstRef variant,
+                             const char *defaultValue) {
+  if (variant.is<const char *>())
+    return variant.as<const char *>();
+  else
+    return defaultValue;
+}
+//
+// JsonVariant operator|(JsonVariant, MemberProxy/ElementProxy)
+template <typename T>
+inline typename enable_if<IsVariant<T>::value, VariantRef>::type operator|(
+    VariantRef variant, T defaultValue) {
+  if (variant)
+    return variant;
+  else
+    return defaultValue;
+}
+
 }  // namespace ARDUINOJSON_NAMESPACE
